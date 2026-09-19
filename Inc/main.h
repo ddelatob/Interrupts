@@ -4,4 +4,7 @@
 #include <stdint.h>
 #include "stm32l4xx.h"
 
+#define BUTTON_PIN (5U)
+
+
 #endif
