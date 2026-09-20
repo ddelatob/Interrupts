@@ -9,5 +9,9 @@ int main(void) {
 
     EXTI->IMR1 |= (0x1UL << BUTTON_PIN);
     EXTI->RTSR1 &= ~(0x1UL << BUTTON_PIN);
-    EXTI->RTSR1 |= (0x1UL << BUTTON_PIN);
+    EXTI->FTSR1  |= (0x1UL << BUTTON_PIN);
+
+    uint8_t interruptPos = 23U;
+    NVIC->IPR[interruptPos] = ((uint8_t)(0x3UL << 4U));
+    NVIC->ISER[interruptPos >> 5U] |= (0x1UL << (interruptPos & 0x1FU));
 }
