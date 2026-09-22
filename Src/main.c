@@ -6,6 +6,11 @@
 int main(void) {
     RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 
+    RCC->AHB2ENR |= (1UL << 1U);
+    GPIOB->MODER &= ~(3UL << BUTTON_PIN);
+    GPIOB->PUPDR &= ~(3UL << BUTTON_PIN);
+    GPIOB->PUPDR |= (1UL << BUTTON_PIN);
+
     uint8_t regIndex = BUTTON_PIN / 4U;
     uint8_t portSource = 1U;
     SYSCFG->EXTICR[regIndex] &= ~(0x7UL << ((BUTTON_PIN % 4U) * 4U));

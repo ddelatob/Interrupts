@@ -45,7 +45,7 @@ LFLAGS += -lgcc
 LFLAGS += -T$(LSCRIPT)
 
 AS_SRC = Src/core.S
-C_SRC = Src/main.c
+C_SRC = Src/main.c Src/helpers.c Src/nvic.c
 
 OBJS = $(AS_SRC:.S=.o)
 OBJS += $(C_SRC:.c=.o)
