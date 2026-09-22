@@ -1,5 +1,6 @@
 TARGET = main
 
+BUILD_DIR = Build
 LD_SCRIPT = STM32L432KC.ld
 MCU_SPEC = cortex-m4
 
@@ -47,25 +48,27 @@ LFLAGS += -T$(LSCRIPT)
 AS_SRC = Src/core.S
 C_SRC = Src/main.c Src/helpers.c Src/nvic.c
 
-OBJS = $(AS_SRC:.S=.o)
-OBJS += $(C_SRC:.c=.o)
+OBJS = $(addprefix $(BUILD_DIR)/, $(notdir $(AS_SRC:.S=.o)))
+OBJS += $(addprefix $(BUILD_DIR)/, $(notdir $(C_SRC:.c=.o)))
 
-.PHONY: all
-all: $(TARGET).bin
+.PHONY: all clean
+all: $(BUILD_DIR)/$(TARGET).bin
 
-%.o: %.S
+$(BUILD_DIR)/%.o: Src/%.S | $(BUILD_DIR)
 	$(CC) -x assembler-with-cpp $(ASFLAGS) $< -o $@
 
-%.o: %.c
+$(BUILD_DIR)/%.o: Src/%.c | $(BUILD_DIR)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
-$(TARGET).elf: $(OBJS)
+$(BUILD_DIR)/$(TARGET).elf: $(OBJS)
 	$(CC) $^ $(LFLAGS) -o $@
 
-$(TARGET).bin: $(TARGET).elf
+$(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
 	$(OC) -S -O binary $< $@
 	$(OS) $<
 
-.PHONY: clean
+$(BUILD_DIR):
+	if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
+
 clean:
-	-del /Q /F Src\*.o 2>NUL
+	-rmdir /S /Q $(BUILD_DIR) 2>NUL
